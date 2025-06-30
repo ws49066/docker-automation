@@ -1,6 +1,8 @@
 from flask import Flask, session
 from controllers.auth_controller import auth_bp
 from dotenv import load_dotenv
+from flask import redirect, url_for
+
 import os
 
 # Carrega as variáveis de ambiente do arquivo .env
@@ -25,7 +27,7 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 # Redireciona a rota raiz para a página de login
 @app.route('/')
 def index():
-    return '<a href="/auth/login">Ir para o login</a>'
+    return redirect(url_for('auth.login_page'))
 
 if __name__ == '__main__':
     # Executa a aplicação Flask

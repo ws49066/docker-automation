@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Bem-vindo, {{ user.email }}!</h1>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Função:</strong> {{ user.role }}</p>
+
+    <div class="mt-4">
+        <a href="http://localhost:5001/user/profile/{{ user.email }}" class="btn btn-primary">Ver Perfil Completo</a>
+        <a href="http://localhost:5001/user/edit/{{ user.email }}" class="btn btn-secondary">Editar Perfil</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Sair</a>
+    </div>
+</div>
+{% endblock %}

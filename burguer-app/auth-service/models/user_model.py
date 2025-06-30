@@ -1,8 +1,5 @@
-# Define como o usuário sera retonado 
-
-def user_serializer(user):
+def serialize_user(user):
     return {
-        "id": str(user["_id"]),
-        "email": user["email"],
-        "role": user["role"],
+        "email": user.get("email"),
+        "role": user.get("role", "cliente")
     }

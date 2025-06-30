@@ -17,8 +17,9 @@ def create():
         if status != 201:
             flash(response["error"])
             return redirect(url_for("user.create"))
-        flash("Usuário criado com sucesso.")
-        return redirect(url_for("user.profile", email=data["email"]))
+        flash("Usuário criado com sucesso! Faça login para continuar.")
+        # Redirect to auth-service login after successful registration
+        return redirect("http://localhost:5000/auth/login")
     return render_template("create.html")
 
 @user_bp.route("/profile/<email>")

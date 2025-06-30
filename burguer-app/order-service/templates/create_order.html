@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+{% block title %}Criar Pedido{% endblock %}
+{% block content %}
+<h2>Criar Novo Pedido</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="user_email" class="form-label">Email do Cliente</label>
+        <input type="email" name="user_email" id="user_email" class="form-control" required 
+               placeholder="Digite o email do cliente cadastrado" list="users-list" />
+        <datalist id="users-list">
+            {% for user in users %}
+                <option value="{{ user.email }}">{{ user.name or user.email }}</option>
+            {% endfor %}
+        </datalist>
+        <div class="form-text">
+            <small class="text-muted">⚠️ O pedido só pode ser criado para clientes já cadastrados no sistema.</small>
+            {% if users %}
+            <details class="mt-2">
+                <summary class="text-muted" style="cursor: pointer;">Ver clientes cadastrados</summary>
+                <div class="mt-2 p-2 border rounded bg-light">
+                    {% for user in users %}
+                        <small class="d-block">{{ user.email }}{% if user.name %} - {{ user.name }}{% endif %}</small>
+                    {% endfor %}
+                </div>
+            </details>
+            {% endif %}
+        </div>
+    </div>
+    
+    <h4>Itens do Pedido</h4>
+    <div id="items-container">
+        <div class="row mb-3 item-row">
+            <div class="col-md-4">
+                <label class="form-label">Nome do Item</label>
+                <input type="text" name="item_name" class="form-control" required />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Quantidade</label>
+                <input type="number" name="item_quantity" class="form-control" min="1" required />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Preço Unitário</label>
+                <input type="number" name="item_price" class="form-control" step="0.01" min="0" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-danger remove-item" onclick="removeItem(this)">Remover</button>
+            </div>
+        </div>
+    </div>
+    
+    <button type="button" class="btn btn-secondary mb-3" onclick="addItem()">Adicionar Item</button>
+    
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Criar Pedido</button>
+        <a href="{{ url_for('order.list_orders') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+<script>
+function addItem() {
+    const container = document.getElementById('items-container');
+    const newItem = document.querySelector('.item-row').cloneNode(true);
+    
+    // Limpa os valores dos inputs
+    newItem.querySelectorAll('input').forEach(input => input.value = '');
+    
+    container.appendChild(newItem);
+}
+
+function removeItem(button) {
+    const container = document.getElementById('items-container');
+    if (container.children.length > 1) {
+        button.closest('.item-row').remove();
+    } else {
+        alert('Deve haver pelo menos um item no pedido');
+    }
+}
+</script>
+{% endblock %}

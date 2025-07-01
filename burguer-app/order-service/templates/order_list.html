@@ -49,7 +49,12 @@
 
 {% if not user_email %}
 <div class="mt-4">
-    <a href="http://localhost:5000/auth/dashboard" class="btn btn-outline-secondary">Voltar ao Dashboard</a>
+    <a href="http://localhost:5000/auth/dashboard" class="btn btn-outline-secondary">← Voltar ao Dashboard</a>
+</div>
+{% else %}
+<div class="mt-4">
+    <a href="http://localhost:5000/auth/dashboard" class="btn btn-outline-secondary">← Voltar ao Dashboard</a>
+    <a href="{{ url_for('order.list_orders') }}" class="btn btn-outline-info">Ver Todos os Pedidos</a>
 </div>
 {% endif %}
 {% endblock %}

@@ -1,8 +1,31 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify
+import requests
 from services.order_service import (
     create_order, get_order_by_id, get_orders_by_user, 
     get_all_orders, update_order_status, delete_order, get_all_users
 )
+
+def get_products_from_service():
+    """Busca produtos do product-service"""
+    try:
+        response = requests.get("http://localhost:5003/product/api/products")
+        if response.status_code == 200:
+            return response.json()
+        return []
+    except Exception as e:
+        print(f"Erro ao buscar produtos: {e}")
+        return []
+
+def get_categories_from_service():
+    """Busca categorias do product-service"""
+    try:
+        response = requests.get("http://localhost:5003/product/api/categories")
+        if response.status_code == 200:
+            return response.json()
+        return []
+    except Exception as e:
+        print(f"Erro ao buscar categorias: {e}")
+        return []
 
 order_bp = Blueprint("order", __name__)
 
@@ -54,7 +77,12 @@ def create():
     
     # Get all users for reference in the form
     users = get_all_users()
-    return render_template("create_order.html", users=users)
+    
+    # Get products from product service
+    products = get_products_from_service()
+    categories = get_categories_from_service()
+    
+    return render_template("create_order.html", users=users, products=products, categories=categories)
 
 @order_bp.route("/list")
 def list_orders():

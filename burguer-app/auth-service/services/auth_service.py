@@ -13,6 +13,8 @@ def login_user(email, password):
     # Retorna token e os dados do usuário para a sessão
     return {
         "email": user["email"],
+        "name": user.get("name", ""),
+        "address": user.get("address", ""),
         "role": user.get("role", "cliente"),
         "token": token
     }

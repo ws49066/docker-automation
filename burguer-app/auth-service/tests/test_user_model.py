@@ -2,109 +2,97 @@ import pytest
 import os
 import sys
 
-# Add the parent directory to the path so we can import modules
+# Adiciona o diretório pai ao sys.path para facilitar importação local
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from models.user_model import serialize_user  # ajuste o import conforme seu arquivo
+from models.user_model import serialize_user  # ajuste conforme sua estrutura
 
-def test_serialize_user_completo():
-    user = {
-        "email": "teste@exemplo.com",
-        "name": "Fulano",
-        "address": "Rua A, 123",
-        "role": "admin"
-    }
-    resultado = serialize_user(user)
-    esperado = {
-        "email": "teste@exemplo.com",
-        "name": "Fulano",
-        "address": "Rua A, 123",
-        "role": "admin"
-    }
-    assert resultado == esperado
+# -------------------------
+# ✅ TESTES FUNCIONAIS VÁLIDOS
+# -------------------------
 
-def test_serialize_user_campos_ausentes():
-    user = {
-        "email": "teste@exemplo.com"
-        # name, address e role ausentes
-    }
+@pytest.mark.parametrize("user, esperado", [
+    (
+        # Caso 1: todos os campos presentes
+        {
+            "email": "teste@exemplo.com",
+            "name": "Fulano",
+            "address": "Rua A, 123",
+            "role": "admin"
+        },
+        {
+            "email": "teste@exemplo.com",
+            "name": "Fulano",
+            "address": "Rua A, 123",
+            "role": "admin"
+        }
+    ),
+    (
+        # Caso 2: campos ausentes (exceto email)
+        {
+            "email": "teste@exemplo.com"
+        },
+        {
+            "email": "teste@exemplo.com",
+            "name": "",
+            "address": "",
+            "role": "cliente"
+        }
+    ),
+    (
+        # Caso 3: todos os campos ausentes
+        {},
+        {
+            "email": None,
+            "name": "",
+            "address": "",
+            "role": "cliente"
+        }
+    ),
+    (
+        # Caso 4: campos com None como valor
+        {
+            "email": None,
+            "name": None,
+            "address": None,
+            "role": None
+        },
+        {
+            "email": None,
+            "name": None,
+            "address": None,
+            "role": None
+        }
+    ),
+    (
+        # Caso 5: campos com tipos incomuns
+        {
+            "email": 123,
+            "name": ["Nome", "Sobrenome"],
+            "address": {"rua": "A"},
+            "role": True
+        },
+        {
+            "email": 123,
+            "name": ["Nome", "Sobrenome"],
+            "address": {"rua": "A"},
+            "role": True
+        }
+    )
+])
+def test_serialize_user_valido(user, esperado):
     resultado = serialize_user(user)
-    esperado = {
-        "email": "teste@exemplo.com",
-        "name": "",
-        "address": "",
-        "role": "cliente"
-    }
-    assert resultado == esperado
-
-def test_serialize_user_email_ausente():
-    user = {}
-    resultado = serialize_user(user)
-    esperado = {
-        "email": None,
-        "name": "",
-        "address": "",
-        "role": "cliente"
-    }
     assert resultado == esperado
 
 # -------------------------
 # ❌ TESTES DE ENTRADAS INVÁLIDAS (NÃO DICIONÁRIO)
 # -------------------------
 
-def test_serialize_user_none():
-    """Entrada é None: deve lançar AttributeError"""
+@pytest.mark.parametrize("entrada", [
+    None,
+    "string",
+    12345,
+    [],
+])
+def test_serialize_user_entradas_invalidas(entrada):
     with pytest.raises(AttributeError):
-        serialize_user(None)
-
-def test_serialize_user_string():
-    """Entrada é string: deve lançar AttributeError"""
-    with pytest.raises(AttributeError):
-        serialize_user("string")
-
-def test_serialize_user_inteiro():
-    """Entrada é número: deve lançar AttributeError"""
-    with pytest.raises(AttributeError):
-        serialize_user(12345)
-
-def test_serialize_user_lista():
-    """Entrada é lista: deve lançar AttributeError"""
-    with pytest.raises(AttributeError):
-        serialize_user([])
-
-# -------------------------
-# 🔄 TESTES DE VALORES COM TIPOS INESPERADOS
-# -------------------------
-
-def test_serialize_user_valores_none():
-    """Campos presentes mas com valor None: None deve ser mantido"""
-    user = {
-        "email": None,
-        "name": None,
-        "address": None,
-        "role": None
-    }
-    resultado = serialize_user(user)
-    esperado = {
-        "email": None,
-        "name": None,
-        "address": None,
-        "role": None
-    }
-    assert resultado == esperado
-
-def test_serialize_user_tipos_incomuns():
-    """Campos com tipos estranhos: devem ser mantidos como estão"""
-    user = {
-        "email": 123,
-        "name": ["Nome", "Sobrenome"],
-        "address": {"rua": "A"},
-        "role": True
-    }
-    resultado = serialize_user(user)
-    esperado = {
-        "email": 123,
-        "name": ["Nome", "Sobrenome"],
-        "address": {"rua": "A"},
-        "role": True
-    }
-    assert resultado == esperado
+        serialize_user(entrada)

@@ -2,16 +2,16 @@ name: Testes Auth Service
 
 on:
   push:
-    branches: [ "test/unit-test-preparation" ]
+    branches: [ "unit-test-preparation" ]
     paths:
-      - 'burguer-app/**'
+      - 'burguer-app/auth-service/**'
   pull_request:
-    branches: [ "test/unit-test-preparation" ]
+    branches: [ "unit-test-preparation" ]
     paths:
       - 'burguer-app/auth-service/**'
 
 jobs:
-  auth-tests:
+  test-auth-service:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: '3.12.4'
 
-    - name: 📚 Instalar dependências
+    - name: 📚 Instalar dependências do auth-service
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt

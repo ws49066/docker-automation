@@ -3,12 +3,10 @@ name: Testes Auth Service
 on:
   push:
     branches: [ "unit-test-preparation" ]
-    paths:
-      - 'burguer-app/auth-service/**'
+   
   pull_request:
     branches: [ "unit-test-preparation" ]
-    paths:
-      - 'burguer-app/auth-service/**'
+   
 
 jobs:
   test-auth-service:

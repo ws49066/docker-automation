@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "test/unit-test-preparation" ]
     paths:
-      - 'burguer-app/auth-service/**'
+      - 'burguer-app/**'
   pull_request:
     branches: [ "test/unit-test-preparation" ]
     paths:

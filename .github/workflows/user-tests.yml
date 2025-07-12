@@ -1,0 +1,37 @@
+name: Testes Auth Service
+
+on:
+  push:
+    branches: [ "unit-test-preparation" ]
+    paths:
+      - 'auth-service/**'
+  pull_request:
+    branches: [ "unit-test-preparation" ]
+    paths:
+      - 'auth-service/**'
+
+jobs:
+  auth-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auth-service
+
+    steps:
+    - name: 📦 Checkout do código
+      uses: actions/checkout@v4
+
+    - name: 🐍 Configurar Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12.4'
+
+    - name: 📚 Instalar dependências
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+
+    - name: 🧪 Rodar testes com cobertura
+      run: |
+        pytest --cov=. --cov-report=term-missing --cov-branch --cov-fail-under=80

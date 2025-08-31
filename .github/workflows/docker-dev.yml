@@ -14,26 +14,66 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Configura Docker Buildx (opcional)
+      # 2️⃣ Configura Docker Buildx (opcional, mas recomendado)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 2.5️⃣ Instala Docker Compose
+      # 3️⃣ Instala Docker Compose
       - name: Install Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-      # 2.6️⃣ Cria .env do user-service usando GitHub Secrets
-      - name: Create .env for user-service
+      # 4️⃣ Cria .env para todos os microsserviços usando GitHub Secrets
+      - name: Create .env files
         working-directory: burguer-app
         run: |
           echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
-          # Adicione outras variáveis conforme necessário
-      # 3️⃣ Subir containers usando Docker Compose (dev override)
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > product-service/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
+
+      # 5️⃣ Sobe os containers (com override de dev)
       - name: Bring up Docker Compose (Dev)
         working-directory: burguer-app
         run: |
           docker-compose -f docker-compose.yml -f docker-compose.override.yml down
           docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+
+      # 6️⃣ Aguardar MongoDB inicializar
+      - name: Wait for MongoDB
+        run: sleep 20
+
+      # 7️⃣ Testar auth-service
+      - name: Test auth-service
+        working-directory: burguer-app/auth-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 8️⃣ Testar order-service
+      - name: Test order-service
+        working-directory: burguer-app/order-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 9️⃣ Testar product-service
+      - name: Test product-service
+        working-directory: burguer-app/product-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 🔟 Testar user-service
+      - name: Test user-service
+        working-directory: burguer-app/user-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 1️⃣1️⃣ Parar containers ao final
+      - name: Shut down containers
+        working-directory: burguer-app
+        run: docker-compose down

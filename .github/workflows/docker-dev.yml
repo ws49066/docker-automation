@@ -45,6 +45,34 @@ jobs:
       - name: Wait for MongoDB
         run: sleep 20
 
+      # 7️⃣ Testar auth-service
+      - name: Test auth-service
+        working-directory: burguer-app/auth-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 8️⃣ Testar order-service
+      - name: Test order-service
+        working-directory: burguer-app/order-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # 9️⃣ Testar product-service
+      - name: Test product-service
+        working-directory: burguer-app/product-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+      # estar user-service
+      - name: Test user-service
+        working-directory: burguer-app/user-service
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
       # Parar containers ao final
       - name: Shut down containers
         working-directory: burguer-app

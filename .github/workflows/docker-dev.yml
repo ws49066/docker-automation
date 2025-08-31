@@ -109,26 +109,29 @@ jobs:
 
       - name: Scan order-service image with Trivy
         run: trivy image --severity HIGH,CRITICAL burguer-app-order-service:latest
-
+        
       # 1️⃣2️⃣ Verificação de dependências Python com Safety
-      - name: Install Safety
-        run: pip install safety
+      - name: Install Safety with compatible Typer
+        run: |
+          pip install typer==0.9.0
+          pip install safety==2.3.2
 
-      - name: Run Safety check
+      - name: Run Safety check (user-service)
         working-directory: burguer-app
         run: safety check -r user-service/requirements.txt
           
-      - name: Run Safety check
+      - name: Run Safety check (product-service)
         working-directory: burguer-app
         run: safety check -r product-service/requirements.txt
 
-      - name: Run Safety check
+      - name: Run Safety check (order-service)
         working-directory: burguer-app
         run: safety check -r order-service/requirements.txt
 
-      - name: Run Safety check
+      - name: Run Safety check (auth-service)
         working-directory: burguer-app
         run: safety check -r auth-service/requirements.txt
+
 
       # 1️⃣3️⃣ Análise de código estática com CodeQL
       - name: Initialize CodeQL

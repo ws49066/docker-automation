@@ -109,28 +109,27 @@ jobs:
 
       - name: Scan order-service image with Trivy
         run: trivy image --severity HIGH,CRITICAL burguer-app-order-service:latest
-
-            # 1️⃣2️⃣ Verificação de dependências Python com Safety
-      - name: Install Safety with compatible dependencies
-        run: |
-          pip install "packaging<23"  # garante compatibilidade com LegacyVersion
-          pip install safety==2.3.2
-
+      # 1️⃣2️⃣ Verificação de dependências Python com Safety (via Docker)
       - name: Run Safety check (user-service)
         working-directory: burguer-app
-        run: safety check -r user-service/requirements.txt
-          
+        run: |
+          docker run --rm -v $PWD/user-service:/src python:3.12-slim bash -c "pip install safety && safety check -r /src/requirements.txt"
+
       - name: Run Safety check (product-service)
         working-directory: burguer-app
-        run: safety check -r product-service/requirements.txt
+        run: |
+          docker run --rm -v $PWD/product-service:/src python:3.12-slim bash -c "pip install safety && safety check -r /src/requirements.txt"
 
       - name: Run Safety check (order-service)
         working-directory: burguer-app
-        run: safety check -r order-service/requirements.txt
+        run: |
+          docker run --rm -v $PWD/order-service:/src python:3.12-slim bash -c "pip install safety && safety check -r /src/requirements.txt"
 
       - name: Run Safety check (auth-service)
         working-directory: burguer-app
-        run: safety check -r auth-service/requirements.txt
+        run: |
+          docker run --rm -v $PWD/auth-service:/src python:3.12-slim bash -c "pip install safety && safety check -r /src/requirements.txt"
+
 
 
       # 1️⃣3️⃣ Análise de código estática com CodeQL

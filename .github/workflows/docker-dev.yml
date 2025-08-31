@@ -26,7 +26,7 @@ jobs:
           docker-compose --version
       # 3️⃣ Subir containers usando Docker Compose (dev override)
       - name: Bring up Docker Compose (Dev)
-        working-directory: ./  # ajuste se o docker-compose.yml estiver em subpasta
+        working-directory: burguer-app
         run: |
           docker-compose -f docker-compose.yml -f docker-compose.override.yml down
           docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build

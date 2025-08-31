@@ -11,15 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Clona o repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Configura o Docker Buildx (opcional)
+      # 2️⃣ Configura Docker Buildx (opcional)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Subir os containers do ambiente Dev usando docker compose moderno
+      # 3️⃣ Subir containers usando Docker Compose (dev override)
       - name: Bring up Docker Compose (Dev)
+        working-directory: ./  # ajuste se o docker-compose.yml estiver em subpasta
         run: |
-          docker compose down
-          docker compose up -d --build
+          docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+          docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build

@@ -109,11 +109,11 @@ jobs:
 
       - name: Scan order-service image with Trivy
         run: trivy image --severity HIGH,CRITICAL burguer-app-order-service:latest
-        
-      # 1️⃣2️⃣ Verificação de dependências Python com Safety
-      - name: Install Safety with compatible Typer
+
+            # 1️⃣2️⃣ Verificação de dependências Python com Safety
+      - name: Install Safety with compatible dependencies
         run: |
-          pip install typer==0.9.0
+          pip install "packaging<23"  # garante compatibilidade com LegacyVersion
           pip install safety==2.3.2
 
       - name: Run Safety check (user-service)

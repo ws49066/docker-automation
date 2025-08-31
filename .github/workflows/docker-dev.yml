@@ -7,73 +7,114 @@ on:
   pull_request:
 
 jobs:
-  docker-up:
+  # 1️⃣ Preparação e testes em paralelo
+  auth-service-test:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Clona o repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Configura Docker Buildx (opcional, mas recomendado)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3️⃣ Instala Docker Compose
       - name: Install Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          if ! command -v docker-compose &> /dev/null; then
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
           docker-compose --version
 
-      # 4️⃣ Cria .env para todos os microsserviços usando GitHub Secrets
-      - name: Create .env files
+      - name: Mask MONGO_URI secret
+        run: echo "::add-mask::${{ secrets.MONGO_URI }}"
+
+      - name: Create .env file for auth-service
         working-directory: burguer-app
         run: |
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > product-service/.env
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
+          cat <<EOF > auth-service/.env
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          EOF
 
-      # 5️⃣ Sobe os containers (com override de dev)
       - name: Bring up Docker Compose (Dev)
         working-directory: burguer-app
         run: |
           docker-compose -f docker-compose.yml -f docker-compose.override.yml down
           docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
 
-      # 6️⃣ Aguardar MongoDB inicializar
       - name: Wait for MongoDB
-        run: sleep 20
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 27017 && break
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
 
-      # 7️⃣ Testar auth-service
       - name: Test auth-service
         working-directory: burguer-app/auth-service
         run: |
           pip install -r requirements.txt
           pytest -v
 
-      # 8️⃣ Testar order-service
+      - name: Shut down containers
+        working-directory: burguer-app
+        run: docker-compose down --volumes
+
+  order-service-test:
+    runs-on: ubuntu-latest
+    needs: auth-service-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Mask MONGO_URI secret
+        run: echo "::add-mask::${{ secrets.MONGO_URI }}"
+      - name: Create .env file for order-service
+        working-directory: burguer-app
+        run: |
+          cat <<EOF > order-service/.env
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          EOF
       - name: Test order-service
         working-directory: burguer-app/order-service
         run: |
           pip install -r requirements.txt
           pytest -v
 
-      # 9️⃣ Testar product-service
+  product-service-test:
+    runs-on: ubuntu-latest
+    needs: auth-service-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Mask MONGO_URI secret
+        run: echo "::add-mask::${{ secrets.MONGO_URI }}"
+      - name: Create .env file for product-service
+        working-directory: burguer-app
+        run: |
+          cat <<EOF > product-service/.env
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          EOF
       - name: Test product-service
         working-directory: burguer-app/product-service
         run: |
           pip install -r requirements.txt
           pytest -v
 
-      # 🔟 Testar user-service
+  user-service-test:
+    runs-on: ubuntu-latest
+    needs: auth-service-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Mask MONGO_URI secret
+        run: echo "::add-mask::${{ secrets.MONGO_URI }}"
+      - name: Create .env file for user-service
+        working-directory: burguer-app
+        run: |
+          cat <<EOF > user-service/.env
+          MONGO_URI=${{ secrets.MONGO_URI }}
+          EOF
       - name: Test user-service
         working-directory: burguer-app/user-service
         run: |
           pip install -r requirements.txt
           pytest -v
-
-      # Parar containers ao final
-      - name: Shut down containers
-        working-directory: burguer-app
-        run: docker-compose down

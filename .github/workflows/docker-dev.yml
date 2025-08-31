@@ -89,3 +89,11 @@ jobs:
       - name: Shut down containers
         working-directory: burguer-app
         run: docker-compose down --volumes
+
+      # 1️⃣1️⃣ Verificação de vulnerabilidades com Trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: "burguer-app_auth-service:latest"
+          severity: HIGH,CRITICAL

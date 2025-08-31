@@ -24,6 +24,13 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
+
+      # 2.6️⃣ Cria .env do user-service usando GitHub Secrets
+      - name: Create .env for user-service
+        working-directory: burguer-app
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
+          # Adicione outras variáveis conforme necessário
       # 3️⃣ Subir containers usando Docker Compose (dev override)
       - name: Bring up Docker Compose (Dev)
         working-directory: burguer-app

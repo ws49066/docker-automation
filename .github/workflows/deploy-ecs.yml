@@ -25,11 +25,11 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest .
-          docker tag ${{ secrets.DOCKER_USERNAME }}burguer-app/auth-service:latest \
-                     ${{ secrets.DOCKER_USERNAME }}burguer-app/auth-service:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}burguer-app/auth-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}burguer-app/auth-service:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }} ./burguer-app/auth-service:latest 
+          docker tag ${{ secrets.DOCKER_USERNAME }}/auth-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  CLUSTER_NAME: my-cluster
+  CLUSTER_NAME: auth-service
   SERVICE_NAME: auth-service
   IMAGE_TAG: ${{ github.sha }}
 

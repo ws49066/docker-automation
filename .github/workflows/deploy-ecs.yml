@@ -20,16 +20,16 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest .
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest \
-                     ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/auth-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -45,12 +45,12 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/order-service:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/order-service:${{ github.sha }}
 
-          # Outservice (já tinha)
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/out-service:latest ./burguer-app/out-service
-          docker tag ${{ secrets.DOCKER_USERNAME }}/out-service:latest \
-                     ${{ secrets.DOCKER_USERNAME }}/out-service:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/out-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/out-service:${{ github.sha }}
+          # Product service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest ./burguer-app/product-service
+          docker tag ${{ secrets.DOCKER_USERNAME }}/product-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -64,4 +64,4 @@ jobs:
           aws ecs update-service --cluster "$CLUSTER_NAME" --service "auth-service" --force-new-deployment
           aws ecs update-service --cluster "$CLUSTER_NAME" --service "user-service" --force-new-deployment
           aws ecs update-service --cluster "$CLUSTER_NAME" --service "order-service" --force-new-deployment
-          aws ecs update-service --cluster "$CLUSTER_NAME" --service "out-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "product-service" --force-new-deployment

@@ -5,8 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  CLUSTER_NAME: auth-service
-  SERVICE_NAME: auth-service
+  CLUSTER_NAME: my-cluster
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -23,13 +22,35 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker images
         run: |
+          # Auth service
           docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest ./burguer-app/auth-service
           docker tag ${{ secrets.DOCKER_USERNAME }}/auth-service:latest \
                      ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.sha }}
+
+          # User service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest ./burguer-app/user-service
+          docker tag ${{ secrets.DOCKER_USERNAME }}/user-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }}
+
+          # Order service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/order-service:latest ./burguer-app/order-service
+          docker tag ${{ secrets.DOCKER_USERNAME }}/order-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/order-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:${{ github.sha }}
+
+          # Outservice (já tinha)
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/out-service:latest ./burguer-app/out-service
+          docker tag ${{ secrets.DOCKER_USERNAME }}/out-service:latest \
+                     ${{ secrets.DOCKER_USERNAME }}/out-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/out-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/out-service:${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,9 +59,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Force new deployment on ECS service
+      - name: Force new deployment on ECS services
         run: |
-          aws ecs update-service \
-            --cluster "$CLUSTER_NAME" \
-            --service "$SERVICE_NAME" \
-            --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "auth-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "user-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "order-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "out-service" --force-new-deployment

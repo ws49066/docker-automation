@@ -32,7 +32,7 @@ jobs:
       # 4.3 – Empacotar função Python
       - name: Package Lambda
         run: |
-          cd ./burguer-app/auth-service-lambda
+          cd ./burguer-app/auth-service
           pip install -r requirements.txt -t .
           zip -r ../../${{ env.ZIP_FILE }} .
 

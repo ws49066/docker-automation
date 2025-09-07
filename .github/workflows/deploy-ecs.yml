@@ -5,10 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  CLUSTER_AUTH: auth-service
-  CLUSTER_USER: user-service
-  CLUSTER_ORDER: order-service
-  CLUSTER_PRODUCT: product-service
+  CLUSTER_NAME: app-cluster
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -64,7 +61,7 @@ jobs:
 
       - name: Force new deployment on ECS services
         run: |
-          aws ecs update-service --cluster "$CLUSTER_AUTH" --service "auth-service" --force-new-deployment
-          aws ecs update-service --cluster "$CLUSTER_USER" --service "user-service" --force-new-deployment
-          aws ecs update-service --cluster "$CLUSTER_ORDER" --service "order-service" --force-new-deployment
-          aws ecs update-service --cluster "$CLUSTER_PRODUCT" --service "product-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "auth-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "auth-task-service-zy1ragky" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "order-service" --force-new-deployment
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "product-service" --force-new-deployment

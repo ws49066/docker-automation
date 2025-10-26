@@ -13,10 +13,10 @@ jobs:
       - name: Checkout de código
         uses: actions/checkout@v4
 
-      - name: Configurar Python 3.12.4
+      - name: Configurar Python 3.12.0
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.4'
+          python-version: '3.12.0'
 
       - name: Install dependencies
         working-directory: ./burguer-app/auth-service

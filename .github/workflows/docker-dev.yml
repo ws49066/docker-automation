@@ -44,10 +44,10 @@ jobs:
     
 
     - name: Test auth-service
-      working-directory: ./burguer-app/auth-service
+      working-directory: ./burguer-app/user-service
       run: |
-        pip install -r requirements.txt
-        pytest -v  
+        pytest -v --cov=models --cov=services --cov=config --cov=controllers
+        radon cc ./models/user_model.py
 
     - name: shut down containers
       working-directory: ./burguer-app

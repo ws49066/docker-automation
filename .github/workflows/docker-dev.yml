@@ -40,6 +40,6 @@ jobs:
         sleep 20  # Aguarda 20 segundos para garantir que os serviços estejam prontos
     
     - name: shut down containers
-      workflow-direction: burguer-app
+      workflow-direction: ./burguer-app
       run: |
         docker-compose down

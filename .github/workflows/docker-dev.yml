@@ -32,6 +32,7 @@ jobs:
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env
     
     - name: 🚀 Subir os containers
+      working-directory: ./burguer-app
       run: | 
         docker-compose down
         docker-compose up -d --build

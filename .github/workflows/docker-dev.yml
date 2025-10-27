@@ -26,6 +26,7 @@ jobs:
 
     - name: Cria .env para todos os services
       run: |
+        ls -R
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env

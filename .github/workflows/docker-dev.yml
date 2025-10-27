@@ -30,6 +30,7 @@ jobs:
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env
+        echo "MONGO_URI=${{ secrets.MONGO_URI }}" > product-service/.env
     
     - name: 🚀 Subir os containers
       working-directory: ./burguer-app

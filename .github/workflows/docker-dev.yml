@@ -25,8 +25,8 @@ jobs:
         docker-compose --version
 
     - name: Cria .env para todos os services
+      working-directory: ./burguer-app
       run: |
-        ls -R
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
         echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env

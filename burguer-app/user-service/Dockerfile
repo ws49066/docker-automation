@@ -1,7 +1,7 @@
 # ================================
 # Etapa 1: Imagem base de build
 # ================================
-FROM python:3.11-slim AS base
+FROM python:3.12.12-slim-trixie AS base
 
 # Definir diretório de trabalho padrão
 WORKDIR /app
@@ -30,7 +30,7 @@ RUN pip install --upgrade pip \
 # ================================
 # Etapa 3: Final image (slim)
 # ================================
-FROM python:3.11-slim AS final
+FROM python:3.12.12-slim-trixie AS final
 
 WORKDIR /app
 
